@@ -7,7 +7,7 @@ from .methods import send_token_email
 from itsdangerous import SignatureExpired
 from app import URL_SERIALIZER
 from flask_login import current_user
-from .forms import LoginForm, RegistrationForm, ForgetPasswordForm, ResetPasswordForm
+from .forms import LoginForm, RegistrationForm, ForgetPasswordForm, ResetPasswordForm, ChangePasswordForm
 
 bp = Blueprint('auth', __name__)
 
@@ -120,31 +120,31 @@ def reset_password(token):
 
     return render_template("reset_password.html", form=form)
     
-@login_required
 @bp.route("/change-password", methods = ["GET", "POST"])
+@login_required
 def change_password():
-    form = ResetPasswordForm()
+    form = ChangePasswordForm()
 
     if request.method == "GET":
-        return render_template("reset_password.html", form=form)
-    
+        return render_template("change_password.html", form=form)
+
     if request.method == "POST" and form.validate_on_submit():
-        # Get the new password from the form
-        password = form.password.data
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+        if not check_password_hash(current_user.password, form.old_password.data):
+            flash("Old password is incorrect.", "danger")
+            return redirect(url_for('auth.change_password'))
+        if form.new_password.data != form.confirm_password.data:
+            flash("New password and confirm password do not match.", "danger")
+            return redirect(url_for('auth.change_password'))
 
-        user = current_user
+        hashed_password = generate_password_hash(form.new_password.data, method='pbkdf2:sha256')
 
-        if user:
-            user.password = hashed_password
-            try:
-                db.session.commit()
-                flash("Your password has been updated successfully!", "success")
-                return redirect(url_for('auth.logout'))
-            except IntegrityError:
-                db.session.rollback()
-                flash("An error occurred while updating your password. Please try again.", "danger")
-        else:
-            flash("User not found.", "danger")
-    
-    return render_template("reset_password.html", form=form)
+        current_user.password = hashed_password
+        try:
+            db.session.commit()
+            flash("Your password has been updated successfully!", "success")
+            return redirect(url_for('auth.logout'))
+        except IntegrityError:
+            db.session.rollback()
+            flash("An error occurred while updating your password. Please try again.", "danger")
+
+    return render_template("change_password.html", form=form)

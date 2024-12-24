@@ -20,3 +20,8 @@ def update():
         db.session.commit()
         return redirect(url_for('views.home'))
     return render_template('update_user.html', form=form)
+
+
+@bp.route('/auth_error')
+def auth_error():
+    return render_template('notAuthorized.html')

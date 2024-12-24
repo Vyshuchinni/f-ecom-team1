@@ -31,9 +31,10 @@ def create_app():
     # Import routes and models
     from . import views
     from . import auth
+    from . import admin
     app.register_blueprint(auth.bp)
     app.register_blueprint(views.bp)
-
+    app.register_blueprint(admin.bp)
     # Create tables
     with app.app_context():
         db.create_all()
