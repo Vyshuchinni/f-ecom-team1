@@ -224,3 +224,7 @@ div.credit a {
     justify-content: center;
     align-items: center;
 }
+
+.color-red{
+    color: red; 
+}

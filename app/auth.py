@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from .methods import send_token_email
 from itsdangerous import SignatureExpired
 from app import URL_SERIALIZER
+from flask_login import current_user
 
 bp = Blueprint('auth', __name__)
 
@@ -106,3 +107,25 @@ def reset_password(token):
 
         flash('Your password has been updated successfully!', 'success')
         return redirect(url_for('auth.login'))
+    
+@login_required
+@bp.route("/change-password", methods = ["GET", "POST"])
+def change_password():
+    if request.method == "POST":
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if password != confirm_password:
+            flash('Passwords not matched.', 'danger')
+            return render_template('reset_password.html')
+
+        user = User.query.filter_by(id = current_user.id).first()
+
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+        user.password = hashed_password
+        db.session.commit()
+
+        flash('Password updated successfully!', 'success')
+        return redirect(url_for('views.home'))
+    
+    return render_template('reset_password.html')

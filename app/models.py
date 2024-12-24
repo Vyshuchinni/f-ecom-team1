@@ -20,6 +20,8 @@ class User(UserMixin,db.Model):
     address = db.Column(db.String(120), nullable=False)
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(10), nullable=False)
+    pincode = db.Column(db.String(10), nullable=False)
+    approved = db.Column(db.Boolean, default=False)
     
 # Product Model (new)
 class Product(db.Model):

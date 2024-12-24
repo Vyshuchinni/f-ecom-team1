@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+    {% block title %}Signup Form{% endblock title %}
+    {% block heads %}
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    {% endblock heads %}
+    {% block content %}
+        <div class="wrapper login-1">
+            <div class="container">
+                <div class="col-left">
+                    <div class="login-text">
+                        <h2>Update Details</h2>
+                    </div>
+                </div>
+                <div class="col-right">
+                    <div class="login-form">
+                        <form method="post">
+                            <p>
+                                <label>First Name<span>*</span></label>
+                                <input type="text" placeholder="First Name" name = "firstname" value = "{{ current_user.firstname }}" required>
+                            </p>
+                            <p>
+                                <label>Last Name<span>*</span></label>
+                                <input type="text" placeholder="Last Name" name = "lastname" value = "{{ current_user.lastname }}" required>
+                            </p>
+                            <p>
+                                <label>Address<span>*</span></label>
+                                <input type="text" placeholder="Your Address" name = "address" value="{{ current_user.address }}" required>
+                            </p>
+                            <p>
+                                <label>Pincode<span>*</span></label>
+                                <input type="text" placeholder="Pincode" name = "pincode" value = "{{ current_user.pincode }}" required>
+                            </p>
+                            
+                            <p>
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    <ul>
+                                        {% for category, message in messages %}
+                                            <li class="{{ category }}">{{ message }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                {% endwith %}
+                            </p>
+                            <p>
+                                <input type="submit" value="Update">
+                            </p>
+                        </form>
+                    </div>
+                </div> 
+            </div>
+            
+        </div>
+
+    {% endblock content %}
+    {% block scripts %}
+        
+    {% endblock scripts %}
