@@ -24,3 +24,26 @@ This project is focused on developing a web platform with **Signup**, **Login**,
    ```bash
    git clone https://github.com/RohitSingh-04/f-ecom-team1.git
    
+2. **flask db init is userd to initialize the migration**:
+   ```bash
+      flask db migrate
+   ```
+   >above command is used to create the migration -m flag is used with this command to add the message for example - 
+   ```bash
+      flask db migrate -m "Initial migration"
+   ```
+
+3. **upgrade the database**:
+   
+   ```bash
+      flask db upgrade
+   ```
+   >the above command is used to apply the migration
+
+4. **Downgrade the DataBase** 
+    
+   ```bash 
+   flask db downgrade
+   ```
+   
+   > the above command is used to revert the migration

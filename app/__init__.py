@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from .models import db, User
 from itsdangerous import URLSafeTimedSerializer
 
@@ -18,7 +19,12 @@ def create_app():
     app.secret_key = "Infosys-Springboard-5.0"
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    # app = Flask(__name__, static_folder='app/static')
+    
+    #to insure safe database migration
+    global migrate
+    migrate = Migrate(app, db)
+    # use of migration instructions are in the README.md file
+   
 
     global URL_SERIALIZER
     URL_SERIALIZER = URLSafeTimedSerializer(app.config['SECRET_KEY'])
@@ -30,7 +36,7 @@ def create_app():
 
     #for solving circular import problem
     from . import views, auth, admin
-    app.register_blueprint(auth.bp)
+    app.register_blueprint(auth.auth)
     app.register_blueprint(views.bp)
     app.register_blueprint(admin.admin, url_prefix='/admin')
 

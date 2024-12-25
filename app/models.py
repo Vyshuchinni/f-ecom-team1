@@ -27,7 +27,7 @@ class User(UserMixin,db.Model):
         return self.role == 'admin'
     
     def isDeliveryPerson(self):
-        return self.role.lower() == 'delivery'
+        return self.role.lower() == 'delivery' and self.approved == True
 
     
 # Product Model

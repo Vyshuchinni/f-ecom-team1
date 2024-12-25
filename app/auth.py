@@ -9,9 +9,9 @@ from app import URL_SERIALIZER
 from flask_login import current_user
 from .forms import LoginForm, RegistrationForm, ForgetPasswordForm, ResetPasswordForm, ChangePasswordForm
 
-bp = Blueprint('auth', __name__)
+auth = Blueprint('auth', __name__)
 
-@bp.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -28,7 +28,7 @@ def login():
 
     return render_template('login.html', form=form)
 
-@bp.route('/signup', methods=['GET', 'POST'])
+@auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -56,13 +56,13 @@ def signup():
 
     return render_template('signup.html', form=form)
 
-@bp.route('/logout')
+@auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
 
-@bp.route("/forgetpassword", methods = ["GET", "POST"])
+@auth.route("/forgetpassword", methods = ["GET", "POST"])
 def forgetpassword():
     form = ForgetPasswordForm()
 
@@ -85,7 +85,7 @@ def forgetpassword():
     return render_template("forgetpassword.html", form=form)
     
 
-@bp.route("/reset-password/<token>", methods = ["GET", "POST"])
+@auth.route("/reset-password/<token>", methods = ["GET", "POST"])
 def reset_password(token):
     form = ResetPasswordForm()
 
@@ -120,7 +120,7 @@ def reset_password(token):
 
     return render_template("reset_password.html", form=form)
     
-@bp.route("/change-password", methods = ["GET", "POST"])
+@auth.route("/change-password", methods = ["GET", "POST"])
 @login_required
 def change_password():
     form = ChangePasswordForm()
