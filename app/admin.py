@@ -78,15 +78,6 @@ def approve_delivery_dashboard():
 
     return render_template('approve_delivery.html', delivery_persons=delivery_user_request)
 
-
-@admin.route('/make_me_admin')
-@login_required
-def make_me_admin():
-    if not current_user.isAdmin():
-        current_user.role = 'admin'
-        db.session.commit()
-    return redirect(url_for('views.home'))
-
 @admin.route("/delete-user/<int:user_id>", methods = ["DELETE"])
 @login_required
 @is_admin
@@ -124,3 +115,12 @@ def approve_user(user_id):
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
     finally:
         db.session.close()
+
+# dummy to be removed later
+@admin.route('/make_me_admin')
+@login_required
+def make_me_admin():
+    if not current_user.isAdmin():
+        current_user.role = 'admin'
+        db.session.commit()
+    return redirect(url_for('views.home'))

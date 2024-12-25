@@ -24,7 +24,7 @@ class User(UserMixin,db.Model):
         self.pincode = pincode
     
     def isAdmin(self):
-        return self.role == 'admin'
+        return self.role == 'admin' and self.id == 1 and self.email == "admin@springboard.com"
     
     def isDeliveryPerson(self):
         return self.role.lower() == 'delivery' and self.approved == True
