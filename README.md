@@ -24,7 +24,7 @@ This project is focused on developing a web platform with **Signup**, **Login**,
    ```bash
    git clone https://github.com/RohitSingh-04/f-ecom-team1.git
    
-2. **flask db init is userd to initialize the migration**:
+2. **flask db init is used to initialize the migration**:
    ```bash
       flask db migrate
    ```

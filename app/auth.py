@@ -148,3 +148,11 @@ def change_password():
             flash("An error occurred while updating your password. Please try again.", "danger")
 
     return render_template("change_password.html", form=form)
+
+@auth.route('/del')
+def delete():
+    
+    user = User.query.filter_by(id = 1).first()
+    db.session.delete(user)
+    db.session.commit()
+    return 'Deleted all tables and created new ones'

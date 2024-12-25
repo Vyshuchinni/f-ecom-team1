@@ -4,6 +4,7 @@ from flask_login import login_required, current_user
 from .models import db, User, Product
 from .decorators import is_admin
 from .forms import AddItemForm
+from .methods import send_approval_email
 
 
 # Define the admin blueprint
@@ -70,12 +71,8 @@ def remove_shop_items(product_id):
 @login_required
 @is_admin
 def approve_delivery_dashboard():
-
     delivery_user_request = User.query.filter_by(role='delivery', approved = False).all()
-
     get_flashed_messages()
-    
-
     return render_template('approve_delivery.html', delivery_persons=delivery_user_request)
 
 @admin.route("/delete-user/<int:user_id>", methods = ["DELETE"])
@@ -89,7 +86,7 @@ def delete_user(user_id):
 
         db.session.delete(user)
         db.session.commit()
-        print("User deleted successfully")
+        send_approval_email(user.email, user.firstname, False)
         return jsonify({'message': 'User deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
@@ -108,7 +105,7 @@ def approve_user(user_id):
 
         user.approved = True
         db.session.commit()
-        print("User approved successfully")
+        send_approval_email(user.email, user.firstname, True)
         return jsonify({'message': 'User approved successfully'}), 200
     except Exception as e:
         db.session.rollback()
