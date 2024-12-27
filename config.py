@@ -14,8 +14,3 @@ class TestConfig(Config):
 class DevelopmentConfig(Config):
     """Configuration for development environment."""
     DEBUG = True  # Enable debug mode for development
-
-class ProductionConfig(Config):
-    """Configuration for production environment."""
-    # Use production DB URI and other settings like logging, etc.
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgres://user:password@localhost/mydatabase')

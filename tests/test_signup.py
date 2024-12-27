@@ -1,16 +1,18 @@
 import unittest
 from flask import Flask, render_template_string, flash, request
 from flask_testing import TestCase
-from main import app, db, models
+from main import create_app, db, models
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash
 
 class TestSignupPage(TestCase):
     def create_app(self):
-        """Configure the app for testing."""
-        app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = 'testsecret'
+        app = create_app(config_class="TestConfig")
         return app
+    
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
 
     def test_signup_page_loads(self):
         """Test if the signup page loads correctly."""
