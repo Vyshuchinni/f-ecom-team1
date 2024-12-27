@@ -40,7 +40,7 @@ def signup():
             address=form.address.data,
             role=form.role.data,
             pincode=form.pincode.data,
-            password=hashed_password,
+            password=hashed_password
         )
 
         try:
@@ -49,10 +49,10 @@ def signup():
             flash('Account created successfully.', 'success')
             return redirect(url_for('auth.login'))
         except IntegrityError:
-            flash('Email already exists.', 'danger')
+            flash('Signup failed! Email already exists.', 'danger')
         except Exception as e:
             print(e)
-            flash('An error occurred!', 'danger')
+            flash('Signup failed! An error occurred!', 'danger')
 
     return render_template('signup.html', form=form)
 
