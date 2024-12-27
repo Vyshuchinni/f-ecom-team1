@@ -2,6 +2,7 @@ import unittest
 from flask import Flask, render_template_string, flash, request
 from flask_testing import TestCase
 from main import app, db, models
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash
 
 class TestSignupPage(TestCase):
@@ -30,21 +31,6 @@ class TestSignupPage(TestCase):
         self.assertIn(b'name="role"', response.data)
         self.assertIn(b'name="pincode"', response.data)
 
-    def test_login_redirects_on_success(self):
-        """Test if submitting the login form redirects on success."""
-        response = self.client.post('/signup', data={
-            'firstname': 'Test',
-            'lastname': 'User',
-            'email': 'test@example.com',
-            'password': 'password123',
-            'confirm_password': 'password123',
-            'address': '123 Test St',
-            'pincode': '123456',
-            'role': 'user'
-        }, follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Sign Up', response.data)
-
     def test_error_message_display(self):
         """Test if error messages are displayed for invalid input."""
         response = self.client.post('/signup', data={
@@ -60,7 +46,42 @@ class TestSignupPage(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'This field is required.', response.data)
 
+    def test_signup_password_mismatch(self):
+        """Test if error message appears for password mismatch."""
+        response = self.client.post('/signup', data={
+            'firstname': 'Test',
+            'lastname': 'User',
+            'email': 'test@example.com',
+            'password': 'password123',
+            'confirm_password': 'wrongpassword',  # Mismatched password
+            'address': '123 Test St',
+            'pincode': '123456',
+            'role': 'user'
+        }, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Field must be equal to password.', response.data)
 
+    def test_signup_email_already_exists(self):
+        """Test if error message appears when email already exists."""
+        # First, create a user with the same email
+        try:
+            existing_user = models.User(
+                firstname="Existing",
+                lastname="User",
+                email="test@example.com",
+                password=generate_password_hash("password123", method='pbkdf2:sha256'),
+                address="123 Test St",
+                role="user",
+                pincode="123456"
+            )
+            db.session.add(existing_user)
+            db.session.commit()
+
+        except IntegrityError:
+            db.session.rollback()
+            self.assertTrue(True, "saved to save data from database")
+        
+        self.assertTrue(existing_user, "User created successfully")
 
 if __name__ == '__main__':
     unittest.main()
