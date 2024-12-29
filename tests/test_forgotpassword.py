@@ -39,6 +39,18 @@ class TestForgetPassword(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Forgot Password", response.data)
 
+    def test_forgetpassword_form_empty_email(self):
+        """Test submitting the form with an empty email field."""
+        response = self.client.post('/forgetpassword', data={'email': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"This field is required.", response.data)  # Assuming this is the error message for empty email
+
+    def test_forgetpassword_form_invalid_email(self):
+        """Test submitting the form with an invalid email format."""
+        response = self.client.post('/forgetpassword', data={'email': 'invalid-email'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Invalid email address.", response.data)  # Assuming this is the error message for invalid email
+
 
 if __name__ == '__main__':
     unittest.main()
